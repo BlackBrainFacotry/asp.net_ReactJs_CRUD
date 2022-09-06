@@ -3,7 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "asp.net_ReactJs_CRUD", "asp.net_ReactJs_CRUD\asp.net_ReactJs_CRUD.csproj", "{5A817DF0-9981-4FDE-BDFF-F069F373DF45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "asp.net_ReactJs_CRUD", "asp.net_ReactJs_CRUD\asp.net_ReactJs_CRUD.csproj", "{5A817DF0-9981-4FDE-BDFF-F069F373DF45}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CFFDD007-2377-4317-916D-F28D46625B09}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnetserver", "dotnetserver", "{A5116938-BF16-4AFB-A60F-82B51BB02D62}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,6 +25,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5A817DF0-9981-4FDE-BDFF-F069F373DF45} = {A5116938-BF16-4AFB-A60F-82B51BB02D62}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4FA41546-DE05-4D94-B27E-820D942E675D}
