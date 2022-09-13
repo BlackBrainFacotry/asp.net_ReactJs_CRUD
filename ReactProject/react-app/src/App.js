@@ -1,7 +1,12 @@
 import React, { useState } from "react"
+import PostCreateForm from "./components/PostCreateForm";
+import PostUpdateForm from "./components/PostUpdateForm";
+
 
 function App() {
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState([]);
+  const [showingCreateNewPostForm, setShowingCreateNewPostForm] = useState(false);
+  const [postCurrentlyBeingUpdated, setPostCurrentlyBeingUpdated] = useState(false);
 
   function getAllPosts() {
     const url = "https://localhost:7222/api/posts";
@@ -19,19 +24,40 @@ function App() {
       });
   }
 
+  function deletePost(postId){
+    const url = "https://localhost:7222/api/posts/" + postId;
+    fetch(url, {
+      method: 'DELETE'
+    })
+      .then(response => response.json())
+      .then(responseFromServer => {
+        console.log(responseFromServer);
+        onPostDeleted(postId);
+      })
+      .catch((error) => {
+        console.log(error);
+        alert(error);
+      });
+}
+
   return (
     <div className="container">
       <div className="row min-vh-100">
         <div className="col d-flex flex-column justify-content-center align-item-center">
+          {(showingCreateNewPostForm === false &&  postCurrentlyBeingUpdated === null ) && (
           <div>
             <h1>React CRUD </h1>
             <div className="mt-5">
               <button onClick={getAllPosts} className="btn btn-dark btn-lg w-100">Get data from api</button>
-              <button onClick={getAllPosts} className="btn btn-dark btn-lg w-100">Create new post</button>
+              <button onClick={() => setShowingCreateNewPostForm(true)} className="btn btn-dark btn-lg w-100">Create new post</button>
             </div>
           </div>
+          )}
+          {(posts.length > 0 && showingCreateNewPostForm === false && postCurrentlyBeingUpdated === null ) && renderTablePosts()}
 
-          {posts.length > 0 && renderTablePosts()}
+          {showingCreateNewPostForm && <PostCreateForm onPostCreated={onPostCreated} />}
+
+          {postCurrentlyBeingUpdated !== null && <PostUpdateForm post={postCurrentlyBeingUpdated} onPostUpdated={onPostUpdated} />}
         </div>
       </div>
     </div>
@@ -56,8 +82,8 @@ function App() {
               <td> {post.title}</td>
               <td> {post.content}</td>
               <td>
-                <button className='btn btn-dark btn-lg'>Update</button>
-                <button className='btn btn-dark btn-lg'>Delate</button>
+                <button onClick={() => setPostCurrentlyBeingUpdated(post)} className='btn btn-dark btn-lg'>Update</button>
+                <button onClick={() => { if(window.confirm('Are you sure you want to delete ' + post.title + '? ')) deletePost(post.postId) }} className='btn btn-dark btn-lg'>Delate</button>
               </td>
             </tr>
             ))}
@@ -67,6 +93,57 @@ function App() {
         <button onClick={() => setPosts([])}></button>
       </div>
     )
+  }
+
+  function onPostCreated(createdPost) {
+    setShowingCreateNewPostForm(false);
+    if(createdPost === null){
+      return;
+    }
+    alert('Post ${createdPost.postId} succesfully created.');
+
+    getAllPosts();
+  }
+
+  function onPostUpdated(updatedPost){
+    setPostCurrentlyBeingUpdated(null);
+
+    if (updatedPost === null) {
+      return;
+    }
+
+
+    let postsCopy = [...posts];
+
+    const index = postsCopy.findIndex((postsCopyPost, currentIndex) => {
+      if(postsCopyPost.postId === updatedPost.postId) {
+        return true;
+      }
+    });
+      if (index !== -1) {
+        postsCopy[index] = updatedPost;
+      }
+      setPosts(postsCopy);
+
+      alert('updated post "${updatedPost.title"');
+    
+  }
+
+  function onPostDeleted(deletedPostPostId){
+    let postsCopy = [...posts];
+
+    const index = postsCopy.findIndex((postsCopyPost, currentIndex) => {
+      if(postsCopyPost.postId === deletedPostPostId) {
+        return true;
+      }
+    });
+      if (index !== -1) {
+        postsCopy.splice(index, 1);
+      }
+      setPosts(postsCopy);
+
+      alert('Deleted post "${updatedPost.title"');
+    
   }
 }
 

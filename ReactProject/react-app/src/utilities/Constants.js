@@ -5,6 +5,6 @@ const ENDPOINTS = {
     GET_POST_BY_ID:"/api/posts/",
     CREATE_POST:"/api/posts",
     UPDATE_POST:"/api/posts",
-    DELETE_POST_BY_ID:"/api/posts/",
+    DELETE_POST_BY_ID: ("/api/posts/",{method: 'DELETE'}),
 
 }
