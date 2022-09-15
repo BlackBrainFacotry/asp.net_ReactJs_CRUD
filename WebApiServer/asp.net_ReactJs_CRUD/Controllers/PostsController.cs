@@ -111,13 +111,26 @@ namespace asp.net_ReactJs_CRUD.Controllers
 
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
-
+            renamePostsId();
             return NoContent();
         }
 
         private bool PostExists(int id)
         {
             return (_context.Posts?.Any(e => e.PostId == id)).GetValueOrDefault();
+        }
+
+        private bool renamePostsId()
+        {
+            int newPostId = 1;
+            foreach(var post in _context.Posts)
+            {
+                post.PostId = newPostId;
+                newPostId++;
+                _context.Posts.Update(post);
+            }
+
+            return _context.SaveChanges() >= 1;
         }
     }
 }

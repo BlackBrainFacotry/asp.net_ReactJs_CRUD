@@ -1,12 +1,14 @@
 import React, { useState } from "react"
 import PostCreateForm from "./components/PostCreateForm";
 import PostUpdateForm from "./components/PostUpdateForm";
+import PostFindByIdForm from "./components/PostFindByIdForm";
 
 
 function App() {
   const [posts, setPosts] = useState([]);
   const [showingCreateNewPostForm, setShowingCreateNewPostForm] = useState(false);
-  const [postCurrentlyBeingUpdated, setPostCurrentlyBeingUpdated] = useState(false);
+  const [postCurrentlyBeingUpdated, setPostCurrentlyBeingUpdated] = useState(null);
+  const [showingFindPostByIdForm, setShowingFindPostByIdForm] = useState(null);
 
   function getAllPosts() {
     const url = "https://localhost:7222/api/posts";
@@ -24,12 +26,12 @@ function App() {
       });
   }
 
-  function deletePost(postId){
+  function deletePost(postId) {
     const url = "https://localhost:7222/api/posts/" + postId;
     fetch(url, {
       method: 'DELETE'
     })
-      .then(response => response.json())
+      //  .then(response => response.json())
       .then(responseFromServer => {
         console.log(responseFromServer);
         onPostDeleted(postId);
@@ -38,26 +40,29 @@ function App() {
         console.log(error);
         alert(error);
       });
-}
+  }
 
   return (
     <div className="container">
       <div className="row min-vh-100">
         <div className="col d-flex flex-column justify-content-center align-item-center">
-          {(showingCreateNewPostForm === false &&  postCurrentlyBeingUpdated === null ) && (
-          <div>
-            <h1>React CRUD </h1>
-            <div className="mt-5">
-              <button onClick={getAllPosts} className="btn btn-dark btn-lg w-100">Get data from api</button>
-              <button onClick={() => setShowingCreateNewPostForm(true)} className="btn btn-dark btn-lg w-100">Create new post</button>
+          {(showingCreateNewPostForm === false && postCurrentlyBeingUpdated === null && showingFindPostByIdForm === null) && (
+            <div>
+              <h1>React CRUD </h1>
+              <div className="mt-5">
+                <button onClick={getAllPosts} className="btn btn-dark btn-lg w-100">Get data from api</button>
+                <button onClick={() => setShowingCreateNewPostForm(true)} className="btn btn-dark btn-lg w-100">Create new post</button>
+                <button onClick={() => setShowingFindPostByIdForm(true)} className="btn btn-dark btn-lg w-100">Find post by ID</button>
+              </div>
             </div>
-          </div>
           )}
-          {(posts.length > 0 && showingCreateNewPostForm === false && postCurrentlyBeingUpdated === null ) && renderTablePosts()}
+          {(posts.length > 0 && showingCreateNewPostForm === false && postCurrentlyBeingUpdated === null && showingFindPostByIdForm === null) && renderTablePosts()}
 
           {showingCreateNewPostForm && <PostCreateForm onPostCreated={onPostCreated} />}
 
-          {postCurrentlyBeingUpdated !== null && <PostUpdateForm post={postCurrentlyBeingUpdated} onPostUpdated={onPostUpdated} />}
+          {(postCurrentlyBeingUpdated !== null && showingFindPostByIdForm === null) && <PostUpdateForm post={postCurrentlyBeingUpdated} onPostUpdated={onPostUpdated} />}
+
+          {showingFindPostByIdForm !== null && <PostFindByIdForm onFoundPostById={onFoundPostById} />}
         </div>
       </div>
     </div>
@@ -78,14 +83,14 @@ function App() {
           <tbody>
             {posts.map((post) => (
               <tr key={post.postId}>
-              <th scope="row">{post.postId}</th>
-              <td> {post.title}</td>
-              <td> {post.content}</td>
-              <td>
-                <button onClick={() => setPostCurrentlyBeingUpdated(post)} className='btn btn-dark btn-lg'>Update</button>
-                <button onClick={() => { if(window.confirm('Are you sure you want to delete ' + post.title + '? ')) deletePost(post.postId) }} className='btn btn-dark btn-lg'>Delate</button>
-              </td>
-            </tr>
+                <th scope="row">{post.postId}</th>
+                <td> {post.title}</td>
+                <td> {post.content}</td>
+                <td>
+                  <button onClick={() => setPostCurrentlyBeingUpdated(post)} className='btn btn-dark btn-lg mr-5'>Update</button>
+                  <button onClick={() => { if (window.confirm('Are you sure you want to delete ' + post.title + '? ')) deletePost(post.postId) }} className='btn btn-dark btn-lg mr-5'>Delate</button>
+                </td>
+              </tr>
             ))}
           </tbody>
         </table>
@@ -97,15 +102,15 @@ function App() {
 
   function onPostCreated(createdPost) {
     setShowingCreateNewPostForm(false);
-    if(createdPost === null){
+    if (createdPost === null) {
       return;
     }
-    alert('Post ${createdPost.postId} succesfully created.');
+    alert('Post ' + createdPost.title + ' succesfully created.');
 
     getAllPosts();
   }
 
-  function onPostUpdated(updatedPost){
+  function onPostUpdated(updatedPost) {
     setPostCurrentlyBeingUpdated(null);
 
     if (updatedPost === null) {
@@ -116,34 +121,46 @@ function App() {
     let postsCopy = [...posts];
 
     const index = postsCopy.findIndex((postsCopyPost, currentIndex) => {
-      if(postsCopyPost.postId === updatedPost.postId) {
+      if (postsCopyPost.postId === updatedPost.postId) {
         return true;
       }
     });
-      if (index !== -1) {
-        postsCopy[index] = updatedPost;
-      }
-      setPosts(postsCopy);
+    if (index !== -1) {
+      postsCopy[index] = updatedPost;
+    }
+    setPosts(postsCopy);
 
-      alert('updated post "${updatedPost.title"');
-    
+    alert('updated post ' + updatedPost.postId);
+
   }
 
-  function onPostDeleted(deletedPostPostId){
+  function onFoundPostById(postFoundById) {
+    setShowingFindPostByIdForm(null);
+
+  
+console.log(postFoundById)
+console.log("gfedsgdsfgwer234444444444")
+    setPosts(postFoundById)
+    console.log("gfedsgdsfgwer")
+    console.log(posts)
+
+  }
+
+  function onPostDeleted(deletedPostPostId) {
     let postsCopy = [...posts];
 
     const index = postsCopy.findIndex((postsCopyPost, currentIndex) => {
-      if(postsCopyPost.postId === deletedPostPostId) {
+      if (postsCopyPost.postId === deletedPostPostId) {
         return true;
       }
     });
-      if (index !== -1) {
-        postsCopy.splice(index, 1);
-      }
-      setPosts(postsCopy);
+    if (index !== -1) {
+      postsCopy.splice(index, 1);
+    }
+    setPosts(postsCopy);
 
-      alert('Deleted post "${updatedPost.title"');
-    
+    alert('Deleted post ' + deletedPostPostId);
+
   }
 }
 

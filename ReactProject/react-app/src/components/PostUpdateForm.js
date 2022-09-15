@@ -47,7 +47,7 @@ export default function PostUpdateForm(props) {
     return (
         <div>
             <form className='w-100 px-5'>
-                <h1 className="mt-5">Updating the post title "props.post.title".</h1>
+                <h1 className="mt-5">Updating the post title {props.post.title}.</h1>
                 <div className="mt-5">
                     <label className="h3 form-label">Post Title</label>
                     <input value={formData.title} name="title" types="text" className="form-control" onChange={handleChange}></input>
@@ -55,7 +55,7 @@ export default function PostUpdateForm(props) {
 
                 <div className="mt-4">
                     <label className="h3 form-label">Post content</label>
-                    <input value={formData.title} name="title" types="text" className="form-control" onChange={handleChange}></input>
+                    <input value={formData.content} name="content" types="text" className="form-control" onChange={handleChange}></input>
                 </div>
                 <button onClick={handleSubmit} className="btn btn-dark btn-lg w-100 mt-5"> Submit</button>
                 <button onClick={() => props.onPostUpdated(null)} className="btn btn-dark btn-lg w-100 mt-3"> Cancel</button>
